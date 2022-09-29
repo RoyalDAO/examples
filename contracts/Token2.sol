@@ -6,9 +6,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Enumer
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/draft-ERC721VotesUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/utils/ISenatorVotesUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
 
 contract Token2 is
     Initializable,
@@ -17,7 +19,7 @@ contract Token2 is
     PausableUpgradeable,
     OwnableUpgradeable,
     EIP712Upgradeable,
-    ERC721VotesUpgradeable
+    ERC721SenatorVotesUpgradeable
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
@@ -28,13 +30,13 @@ contract Token2 is
         _disableInitializers();
     }
 
-    function initialize() public initializer {
+    function initialize(ISenateUpgradeable _senate) public initializer {
         __ERC721_init("Token2", "TK2");
         __ERC721Enumerable_init();
         __Pausable_init();
         __Ownable_init();
         __EIP712_init("Token2", "1");
-        __ERC721Votes_init();
+        __ERC721SenatorVotes_init(_senate);
     }
 
     function pause() public onlyOwner {
@@ -70,7 +72,7 @@ contract Token2 is
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721Upgradeable, ERC721VotesUpgradeable) {
+    ) internal override(ERC721Upgradeable, ERC721SenatorVotesUpgradeable) {
         super._afterTokenTransfer(from, to, tokenId);
     }
 
@@ -80,6 +82,8 @@ contract Token2 is
         override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
         returns (bool)
     {
-        return super.supportsInterface(interfaceId);
+        return
+            super.supportsInterface(interfaceId) ||
+            interfaceId == type(ISenatorVotesUpgradeable).interfaceId;
     }
 }

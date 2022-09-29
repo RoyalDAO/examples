@@ -1,21 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@royaldao/royaldao-contract-upgradeable/contracts/ChancelorUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/extensions/ChancelorSettingsUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/extensions/SenateVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/extensions/SenateVotesQuorumFractionUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/extensions/ChancelorTimelockControlUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ChancelorUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/ChancelorSenateControlUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/ChancelorTimelockControlUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract RepublicChancelor is
     Initializable,
     ChancelorUpgradeable,
-    ChancelorSettingsUpgradeable,
     ChancelorCompatibilityBravoUpgradeable,
-    SenateVotesUpgradeable,
-    SenateVotesQuorumFractionUpgradeable,
+    ChancelorSenateControlUpgradeable,
     ChancelorTimelockControlUpgradeable
 {
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -24,27 +20,19 @@ contract RepublicChancelor is
     }
 
     function initialize(
-        IVotesUpgradeable[] memory _tokensUpgradeable,
-        IVotes[] memory _tokens,
         TimelockControllerUpgradeable _timelock,
-        uint256 _votingDelay,
-        uint256 _votingPeriod,
-        uint256 _tokenTreshold,
-        uint256 _quorumPercentage
+        SenateUpgradeable _senate
     ) public initializer {
         __Chancelor_init("RepublicChancelor");
-        __ChancelorSettings_init(_votingDelay, _votingPeriod, _tokenTreshold);
         __ChancelorCompatibilityBravo_init();
-        //__ChancelorCountingSimple_init();
-        __SenateVotes_init(_tokensUpgradeable, _tokens);
-        __SenateVotesQuorumFraction_init(_quorumPercentage);
+        __ChancelorSenateControl_init(_senate);
         __ChancelorTimelockControl_init(_timelock);
     }
 
     function votingDelay()
         public
         view
-        override(IChancelorUpgradeable, ChancelorSettingsUpgradeable)
+        override(IChancelorUpgradeable, ChancelorSenateControlUpgradeable)
         returns (uint256)
     {
         return super.votingDelay();
@@ -53,25 +41,7 @@ contract RepublicChancelor is
     function votingPeriod()
         public
         view
-        override(IChancelorUpgradeable, ChancelorSettingsUpgradeable)
-        returns (uint256)
-    {
-        return super.votingPeriod();
-    }
-
-    function votingDelayOfType(uint256 _typeId)
-        public
-        view
-        override(IChancelorUpgradeable)
-        returns (uint256)
-    {
-        return super.votingDelay();
-    }
-
-    function votingPeriodOfType(uint256 _typeId)
-        public
-        view
-        override(IChancelorUpgradeable)
+        override(IChancelorUpgradeable, ChancelorSenateControlUpgradeable)
         returns (uint256)
     {
         return super.votingPeriod();
@@ -80,7 +50,7 @@ contract RepublicChancelor is
     function quorum(uint256 blockNumber)
         public
         view
-        override(IChancelorUpgradeable, SenateVotesQuorumFractionUpgradeable)
+        override(IChancelorUpgradeable, ChancelorSenateControlUpgradeable)
         returns (uint256)
     {
         return super.quorum(blockNumber);
@@ -123,7 +93,7 @@ contract RepublicChancelor is
     function proposalThreshold()
         public
         view
-        override(ChancelorUpgradeable, ChancelorSettingsUpgradeable)
+        override(ChancelorUpgradeable, ChancelorSenateControlUpgradeable)
         returns (uint256)
     {
         return super.proposalThreshold();
@@ -170,7 +140,8 @@ contract RepublicChancelor is
         override(
             ChancelorUpgradeable,
             IERC165Upgradeable,
-            ChancelorTimelockControlUpgradeable
+            ChancelorTimelockControlUpgradeable,
+            ChancelorSenateControlUpgradeable
         )
         returns (bool)
     {

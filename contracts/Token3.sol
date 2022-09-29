@@ -1,27 +1,43 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/utils/ISenatorVotesUpgradeable.sol";
+import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
 
-contract Token3 is
-    ERC721,
-    ERC721Enumerable,
-    Pausable,
-    Ownable,
-    EIP712,
-    ERC721Votes
+contract Token1 is
+    Initializable,
+    ERC721Upgradeable,
+    ERC721EnumerableUpgradeable,
+    PausableUpgradeable,
+    OwnableUpgradeable,
+    EIP712Upgradeable,
+    ERC721SenatorVotesUpgradeable
 {
-    using Counters for Counters.Counter;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    Counters.Counter private _tokenIdCounter;
+    CountersUpgradeable.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Token3", "TK3") EIP712("Token3", "1") {}
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(ISenateUpgradeable _senate) public initializer {
+        __ERC721_init("Token1", "TK1");
+        __ERC721Enumerable_init();
+        __Pausable_init();
+        __Ownable_init();
+        __EIP712_init("Token1", "1");
+        __ERC721SenatorVotes_init(_senate);
+    }
 
     function pause() public onlyOwner {
         _pause();
@@ -41,7 +57,12 @@ contract Token3 is
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
+    )
+        internal
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
+        whenNotPaused
+    {
+        if (delegates(to) == address(0)) _delegate(to, to);
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
@@ -51,16 +72,18 @@ contract Token3 is
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721, ERC721Votes) {
+    ) internal override(ERC721Upgradeable, ERC721SenatorVotesUpgradeable) {
         super._afterTokenTransfer(from, to, tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable)
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
         returns (bool)
     {
-        return super.supportsInterface(interfaceId);
+        return
+            interfaceId == type(ISenatorVotesUpgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }

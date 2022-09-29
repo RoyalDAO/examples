@@ -27,6 +27,7 @@ const deployChancelor: DeployFunction = async (
 
   const token1 = await get("Token1");
   const token2 = await get("Token2");
+  const token3 = await get("Token3");
 
   const executorFactory = await ethers.getContractFactory("RepublicExecutor");
 
@@ -35,17 +36,14 @@ const deployChancelor: DeployFunction = async (
     executor.address
   );
 
+  const senate = await get("RepublicSenate");
+
   console.log(`Token1 address: ${token1.address}`);
   console.log(`Executor address: ${executor.address}`);
   const chancelorFactory = await ethers.getContractFactory("RepublicChancelor");
   const chancelor = await upgrades.deployProxy(chancelorFactory, [
-    [token1.address, token2.address],
-    [],
     executor.address,
-    votingDelay,
-    votingPeriod,
-    tokenTreshold,
-    quorum,
+    senate.address,
   ]);
 
   await chancelor.deployed();

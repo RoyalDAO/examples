@@ -12,7 +12,7 @@ import "@royaldao/royaldao-contract-upgradeable/contracts/Token/ERC721/extension
 import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/utils/ISenatorVotesUpgradeable.sol";
 import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
 
-contract Token3 is
+contract Token6 is
     Initializable,
     ERC721Upgradeable,
     ERC721EnumerableUpgradeable,
@@ -31,11 +31,11 @@ contract Token3 is
     }
 
     function initialize(ISenateUpgradeable _senate) public initializer {
-        __ERC721_init("Token3", "TK3");
+        __ERC721_init("Token6", "TK6");
         __ERC721Enumerable_init();
         __Pausable_init();
         __Ownable_init();
-        __EIP712_init("Token3", "1");
+        __EIP712_init("Token6", "1");
         __ERC721SenatorVotes_init(_senate);
     }
 
@@ -83,7 +83,7 @@ contract Token3 is
         returns (bool)
     {
         return
-            interfaceId == type(ISenatorVotesUpgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
+            super.supportsInterface(interfaceId) ||
+            interfaceId == type(ISenatorVotesUpgradeable).interfaceId;
     }
 }
