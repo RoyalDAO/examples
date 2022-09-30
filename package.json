@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@royaldao/royaldao-contract-upgradeable": "^1.0.7",
     "dotenv": "^16.0.2",
     "hardhat": "^2.9.9"
   },
@@ -17,6 +16,8 @@
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.20.0",
+    "@royaldao/contracts": "^1.0.1",
+    "@royaldao/contracts-upgradeable": "^1.0.16",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
     "@types/chai": "^4.2.0",

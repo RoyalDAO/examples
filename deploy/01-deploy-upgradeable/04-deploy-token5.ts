@@ -8,36 +8,36 @@ const BASE_FEE = ethers.utils.parseEther("0.25");
 // Calculated value based on the gas price on the chain
 const GAS_PRICE_LINK = 1e9;
 
-const deployToken3: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployToken5: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, log, save, get } = deployments;
 
   const { deployer } = await getNamedAccounts();
   const { chainId } = network.config;
-  const senate = await get("RepublicSenate");
 
-  const Token3Factory = await ethers.getContractFactory("Token3");
-  const token3 = await upgrades.deployProxy(Token3Factory, [senate.address]);
-  await token3.deployed();
+  const senate = await get("UpgradeableRepublicSenate");
 
-  console.log(token3.address, " Token3(proxy) address");
+  const Token5Factory = await ethers.getContractFactory("Token5");
+  const token5 = await upgrades.deployProxy(Token5Factory, [senate.address]);
+  await token5.deployed();
+
+  console.log(token5.address, " Token5(Proxy) address");
   console.log(
-    await upgrades.erc1967.getImplementationAddress(token3.address),
+    await upgrades.erc1967.getImplementationAddress(token5.address),
     " getImplementationAddress"
   );
   console.log(
-    await upgrades.erc1967.getAdminAddress(token3.address),
+    await upgrades.erc1967.getAdminAddress(token5.address),
     " getAdminAddress"
   );
+  const artifact = await deployments.getArtifact("Token5");
 
-  const artifact = await deployments.getArtifact("Token3");
-
-  await save("Token3", {
-    address: token3.address,
+  await save("Token5", {
+    address: token5.address,
     ...artifact,
   });
 };
 
-export default deployToken3;
+export default deployToken5;
 
-deployToken3.tags = ["all", "token3"];
+deployToken5.tags = ["all", "token5"];

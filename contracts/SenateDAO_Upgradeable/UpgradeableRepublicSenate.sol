@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/SenateUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/SenateSettingsUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/SenateVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/SenateVotesQuorumFractionUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/ChancelorTimelockControlUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/SenateUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/ISenateUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/SenateSettingsUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/SenateVotesUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/SenateVotesQuorumFractionUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/ChancelorTimelockControlUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract RepublicSenate is
+contract UpgradeableRepublicSenate is
     Initializable,
     SenateUpgradeable,
     SenateSettingsUpgradeable,

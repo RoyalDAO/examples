@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ChancelorUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/ChancelorSenateControlUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/extensions/ChancelorTimelockControlUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/ChancelorUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/ChancelorSenateControlUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/extensions/ChancelorTimelockControlUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract RepublicChancelor is
+contract UpgradeableRepublicChancelor is
     Initializable,
     ChancelorUpgradeable,
     ChancelorCompatibilityBravoUpgradeable,
@@ -23,7 +23,7 @@ contract RepublicChancelor is
         TimelockControllerUpgradeable _timelock,
         SenateUpgradeable _senate
     ) public initializer {
-        __Chancelor_init("RepublicChancelor");
+        __Chancelor_init("UpgradeableRepublicChancelor");
         __ChancelorCompatibilityBravo_init();
         __ChancelorSenateControl_init(_senate);
         __ChancelorTimelockControl_init(_timelock);

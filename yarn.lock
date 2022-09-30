@@ -744,13 +744,15 @@
     proper-lockfile "^4.1.1"
     solidity-ast "^0.4.15"
 
-"@royaldao/royaldao-contract-upgradeable@^1.0.7":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@royaldao/royaldao-contract-upgradeable/-/royaldao-contract-upgradeable-1.0.11.tgz#17227d6c2c28d75725991ae92eb19ef70f169b7c"
-  integrity sha512-8bW9K722/3CCIotjxkAlAXKgfY4hNlbhoww7oF2Bi2WBOf3F/QH6NrbUeen6OjxqtvDJYVsCqMR+spS3qyPQ7w==
-  dependencies:
-    dotenv "^16.0.2"
-    hardhat "^2.9.9"
+"@royaldao/contracts-upgradeable@^1.0.16":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@royaldao/contracts-upgradeable/-/contracts-upgradeable-1.0.16.tgz#fb1327fc86c3399d268e71f967adc4370c892177"
+  integrity sha512-Ux2oXVz+1pW4aKxw1E5WMVr9F/nyw/ykrcragte964rcBTE1stY6W4yiH/x2sKJzd8LNknnVEie2aHRkndf/aQ==
+
+"@royaldao/contracts@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@royaldao/contracts/-/contracts-1.0.1.tgz#bc6cdca92a7afc4efa375a7d5769e133037ad008"
+  integrity sha512-UbeKEQ0xaEEa/2O7UJNfuSvvTbHEE75ucd5P1uOqhjf4FJGW9k8ZGqwYYhoB0Spa5xbetaPwyuMDjctVqZI+ew==
 
 "@scure/base@~1.1.0":
   version "1.1.1"

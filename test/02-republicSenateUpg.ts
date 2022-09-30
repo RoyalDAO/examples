@@ -1,12 +1,12 @@
 import { assert, expect } from "chai";
 import { BigNumber } from "ethers";
 import {
-  RepublicChancelor,
-  RepublicChancelor__factory,
-  RepublicExecutor,
-  RepublicExecutor__factory,
-  RepublicSenate,
-  RepublicSenate__factory,
+  UpgradeableRepublicChancelor,
+  UpgradeableRepublicChancelor__factory,
+  UpgradeableRepublicExecutor,
+  UpgradeableRepublicExecutor__factory,
+  UpgradeableRepublicSenate,
+  UpgradeableRepublicSenate__factory,
   Token1,
   Token1__factory,
   Token2,
@@ -21,23 +21,23 @@ import {
   Token6__factory,
 } from "../typechain-types";
 import Web3 from "web3";
-import deployToken1 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token1";
-import deployExecutor from "../deploy/02-deploy-nonUpgradeable/01-deploy-republicExecutor";
-import deployChancelor from "../deploy/02-deploy-nonUpgradeable/03-deploy-republicChancelor";
+import deployToken1 from "../deploy/01-deploy-upgradeable/04-deploy-token1";
 import { chainMine, chainSleep, getAccount } from "../scripts/utils";
-import { ProposalCreatedEvent } from "../typechain-types/@royaldao/contracts/Governance/Chancelor";
-import { ProposalQueuedEvent } from "../typechain-types/@royaldao/contracts/Governance/compatibility/ChancelorCompatibilityBravo";
-import deployToken2 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token2";
+import { ProposalCreatedEvent } from "../typechain-types/@royaldao/contracts-upgradeable/Governance/ChancelorUpgradeable";
+import { ProposalQueuedEvent } from "../typechain-types/@royaldao/contracts-upgradeable/Governance/compatibility/ChancelorCompatibilityBravoUpgradeable";
+import deployToken2 from "../deploy/01-deploy-upgradeable/04-deploy-token2";
 import { network } from "hardhat";
-import deployNewCommer from "../deploy/02-deploy-nonUpgradeable/08-deploy-newCommer";
-import deploySenate from "../deploy/02-deploy-nonUpgradeable/02-deploy-republicSenate";
-import deployToken3 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token3";
-import deployToken4 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token4";
-import deployToken5 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token5";
-import deployToken6 from "../deploy/02-deploy-nonUpgradeable/04-deploy-token6";
+import deployNewCommer from "../deploy/01-deploy-upgradeable/08-deploy-newCommer";
+import deployToken3 from "../deploy/01-deploy-upgradeable/04-deploy-token3";
+import deployToken4 from "../deploy/01-deploy-upgradeable/04-deploy-token4";
+import deployToken5 from "../deploy/01-deploy-upgradeable/04-deploy-token5";
+import deployToken6 from "../deploy/01-deploy-upgradeable/04-deploy-token6";
+import deployExecutorUpg from "../deploy/01-deploy-upgradeable/01-deploy-republicExecutorUpg";
+import deploySenateUpg from "../deploy/01-deploy-upgradeable/02-deploy-republicSenateUpg";
+import deployChancelorUpg from "../deploy/01-deploy-upgradeable/03-deploy-republicChancelorUpg";
 
 const hre = require("hardhat");
-describe("RepublicSenateDao", function () {
+describe("RepublicSenateDaoUpgd", function () {
   const { deployments, getNamedAccounts, web3, ethers } = require("hardhat");
   const { get } = deployments;
 
@@ -48,28 +48,30 @@ describe("RepublicSenateDao", function () {
 
   const gasPrice = "20"; //gwei
 
+  //Upg Tokens
   let _token1Contract: Token1;
   let _token2Contract: Token2;
   let _token3Contract: Token3;
   let _token4Contract: Token4;
   let _token5Contract: Token5;
+  //Tokens
   let _token6Contract: Token6;
 
-  let _republicExecutorContract: RepublicExecutor;
-  let _republicSenateContract: RepublicSenate;
-  let _republicChancelorContract: RepublicChancelor;
+  let _republicExecutorContract: UpgradeableRepublicExecutor;
+  let _republicSenateContract: UpgradeableRepublicSenate;
+  let _republicChancelorContract: UpgradeableRepublicChancelor;
   beforeEach(async function () {
     const { deployer, safeCaller } = await getNamedAccounts();
 
-    await deployExecutor(hre);
-    await deploySenate(hre);
+    await deployExecutorUpg(hre);
+    await deploySenateUpg(hre);
     await deployToken1(hre);
     await deployToken2(hre);
     await deployToken3(hre);
     await deployToken4(hre);
     await deployToken5(hre);
-    //await deployToken6(hre);
-    await deployChancelor(hre);
+    await deployToken6(hre);
+    await deployChancelorUpg(hre);
 
     const token1Factory: Token1__factory = await ethers.getContractFactory(
       "Token1"
@@ -113,23 +115,23 @@ describe("RepublicSenateDao", function () {
 
     _token6Contract = await token6Factory.attach(_token6.address);
 
-    const executorFactory: RepublicExecutor__factory =
-      await ethers.getContractFactory("RepublicExecutor");
-    const _executor = await get("RepublicExecutor");
+    const executorFactory: UpgradeableRepublicExecutor__factory =
+      await ethers.getContractFactory("UpgradeableRepublicExecutor");
+    const _executor = await get("UpgradeableRepublicExecutor");
 
     _republicExecutorContract = await executorFactory.attach(_executor.address);
 
-    const chancelorFactory: RepublicChancelor__factory =
-      await ethers.getContractFactory("RepublicChancelor");
-    const _chancelor = await get("RepublicChancelor");
+    const chancelorFactory: UpgradeableRepublicChancelor__factory =
+      await ethers.getContractFactory("UpgradeableRepublicChancelor");
+    const _chancelor = await get("UpgradeableRepublicChancelor");
 
     _republicChancelorContract = await chancelorFactory.attach(
       _chancelor.address
     );
 
-    const senateFactory: RepublicSenate__factory =
-      await ethers.getContractFactory("RepublicSenate");
-    const _senate = await get("RepublicSenate");
+    const senateFactory: UpgradeableRepublicSenate__factory =
+      await ethers.getContractFactory("UpgradeableRepublicSenate");
+    const _senate = await get("UpgradeableRepublicSenate");
 
     _republicSenateContract = await senateFactory.attach(_senate.address);
 
@@ -143,15 +145,15 @@ describe("RepublicSenateDao", function () {
       _token3.address,
       _token4.address,
       _token5.address,
-      //_token6.address,
+      _token6.address,
     ]);
 
     const openSenateReceipt = await openSenateTx.wait(1);
 
     console.log(
-      `Gas cost of Senate Opening at 20 gwei: ${web3.utils.fromWei(
+      `Gas cost of Senate Opening at ${gasPrice} gwei: ${web3.utils.fromWei(
         openSenateReceipt.cumulativeGasUsed
-          .mul(BigNumber.from("20000000000"))
+          .mul(BigNumber.from(web3.utils.toWei(gasPrice, "gwei")))
           .toString(),
         "ether"
       )} eth`
@@ -171,7 +173,7 @@ describe("RepublicSenateDao", function () {
     assert(_republicSenateContract, "Could not deploy senate contract");
     assert(_republicChancelorContract, "Could not deploy chancelor contract");
   });
-  describe("RepublicSenateDao::DaoTest", function () {
+  describe("RepublicSenateDaoUpgd::DaoTest", function () {
     it("Try to create a proposal and vote. It should work with no problems", async function () {
       const { deployer, safeCaller } = await getNamedAccounts();
       const _web3: Web3 = web3;
@@ -186,7 +188,7 @@ describe("RepublicSenateDao", function () {
       //mint token 4
       await mintTokens(_token4Contract, _minters, _minters.length);
       //mint token 5
-      //await mintTokens(_token5Contract, _minters, _minters.length);
+      await mintTokens(_token5Contract, _minters, _minters.length);
       //mint token 6
       //await mintTokens(_token6Contract, _minters, _minters.length);
 
@@ -195,7 +197,9 @@ describe("RepublicSenateDao", function () {
         "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
       const args = [2];
 
-      const factory = await ethers.getContractFactory("RepublicSenate");
+      const factory = await ethers.getContractFactory(
+        "UpgradeableRepublicSenate"
+      );
       const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
         "setProposalThreshold",
         args
@@ -366,14 +370,16 @@ describe("RepublicSenateDao", function () {
       //mint token 4
       await mintTokens(_token4Contract, _minters, _minters.length);
       //mint token 6
-      //await mintTokens(_token6Contract, _minters, _minters.length);
+      await mintTokens(_token6Contract, _minters, _minters.length);
 
       //proposal
       const PROPOSAL_DESCRIPTION =
         "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
       const args = [2];
 
-      const factory = await ethers.getContractFactory("RepublicSenate");
+      const factory = await ethers.getContractFactory(
+        "UpgradeableRepublicSenate"
+      );
       const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
         "setProposalThreshold",
         args
@@ -488,7 +494,7 @@ describe("RepublicSenateDao", function () {
       await chainMine(1);
     });
   });
-  describe("RepublicSenateDao::SenateTest", function () {
+  describe("RepublicSenateDaoUpgd::SenateTest", function () {
     it("Try to accept new senate member through proposal. It should work with no problems", async function () {
       const { deployer, safeCaller } = await getNamedAccounts();
       const _web3: Web3 = web3;
@@ -546,7 +552,9 @@ describe("RepublicSenateDao", function () {
         "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
       const args = [newCommer.address];
 
-      const factory = await ethers.getContractFactory("RepublicSenate");
+      const factory = await ethers.getContractFactory(
+        "UpgradeableRepublicSenate"
+      );
       const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
         "acceptToSenate",
         args
@@ -751,7 +759,9 @@ describe("RepublicSenateDao", function () {
         "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
       const args = [newCommer.address];
 
-      const factory = await ethers.getContractFactory("RepublicSenate");
+      const factory = await ethers.getContractFactory(
+        "UpgradeableRepublicSenate"
+      );
       const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
         "acceptToSenate",
         args
@@ -894,7 +904,7 @@ describe("RepublicSenateDao", function () {
   });
 
   async function mintTokens(
-    tokenContract: Token1 | Token2 | Token3 | Token4 | Token5,
+    tokenContract: Token1 | Token2 | Token3 | Token4 | Token5 | Token6,
     _minters: any[],
     tokenQtty: Number
   ) {
@@ -941,7 +951,7 @@ describe("RepublicSenateDao", function () {
     functionData: any[],
     proposer: any,
     proposalDescription: string,
-    republicChancelor: RepublicChancelor
+    republicChancelor: UpgradeableRepublicChancelor
   ): Promise<BigNumber> {
     const account = await getAccount("owner");
 
@@ -955,8 +965,10 @@ describe("RepublicSenateDao", function () {
     const receipt = await proposalTx.wait(1);
 
     console.log(
-      `Gas cost of proposal at 20 gwei: ${web3.utils.fromWei(
-        receipt.cumulativeGasUsed.mul(BigNumber.from("20000000000")).toString(),
+      `Gas cost of proposal at ${gasPrice} gwei: ${web3.utils.fromWei(
+        receipt.cumulativeGasUsed
+          .mul(BigNumber.from(web3.utils.toWei(gasPrice, "gwei")))
+          .toString(),
         "ether"
       )} eth`
     );
@@ -988,7 +1000,7 @@ describe("RepublicSenateDao", function () {
     proposal_id: BigNumber,
     vote: number,
     reason: String,
-    republicChancelor: RepublicChancelor
+    republicChancelor: UpgradeableRepublicChancelor
   ): Promise<boolean> {
     let voteDesc = "IN FAVOR";
 
@@ -1011,9 +1023,9 @@ describe("RepublicSenateDao", function () {
         const receipt = await tx.wait(1);
 
         console.log(
-          `Gas cost of vote at 20 gwei: ${web3.utils.fromWei(
+          `Gas cost of vote at ${gasPrice} gwei: ${web3.utils.fromWei(
             receipt.cumulativeGasUsed
-              .mul(BigNumber.from("20000000000"))
+              .mul(BigNumber.from(web3.utils.toWei(gasPrice, "gwei")))
               .toString(),
             "ether"
           )} eth`
@@ -1034,7 +1046,7 @@ describe("RepublicSenateDao", function () {
     values: any[],
     functionData: any[],
     proposalDescription: string,
-    republicChancelor: RepublicChancelor
+    republicChancelor: UpgradeableRepublicChancelor
   ): Promise<BigNumber> {
     const description_hash = ethers.utils.id(proposalDescription); //web3.utils.keccak256(proposalDescription)
     console.log(description_hash);
@@ -1066,7 +1078,7 @@ describe("RepublicSenateDao", function () {
     values: any[],
     functionData: any[],
     proposalDescription: string,
-    republicChancelor: RepublicChancelor
+    republicChancelor: UpgradeableRepublicChancelor
   ) {
     const description_hash = ethers.utils.id(proposalDescription);
     republicChancelor = await republicChancelor.connect(_from);

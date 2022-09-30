@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/TimelockControllerUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/TimelockControllerUpgradeable.sol";
 
-contract RepublicExecutor is TimelockControllerUpgradeable {
+contract UpgradeableRepublicExecutor is TimelockControllerUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();

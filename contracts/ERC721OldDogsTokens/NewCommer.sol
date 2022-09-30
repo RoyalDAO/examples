@@ -22,7 +22,7 @@ contract NewCommer is
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Token3", "TK3") EIP712("Token3", "1") {}
+    constructor() ERC721("NewCommer1", "NC1") EIP712("NewCommer1", "1") {}
 
     function pause() public onlyOwner {
         _pause();

@@ -1,7 +1,7 @@
 import { artifacts, ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { developmentChains } from "../helper-hardhat.config";
+import { developmentChains } from "../../helper-hardhat.config";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 

@@ -8,9 +8,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/utils/ISenatorVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/utils/ISenatorVotesUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/ISenateUpgradeable.sol";
 
 contract Token3 is
     Initializable,

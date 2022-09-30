@@ -8,11 +8,11 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/utils/ISenatorVotesUpgradeable.sol";
-import "@royaldao/royaldao-contract-upgradeable/contracts/Governance/ISenateUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Token/ERC721/extensions/ERC721SenatorVotesUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/utils/ISenatorVotesUpgradeable.sol";
+import "@royaldao/contracts-upgradeable/Governance/ISenateUpgradeable.sol";
 
-contract Token4 is
+contract Token8 is
     Initializable,
     ERC721Upgradeable,
     ERC721EnumerableUpgradeable,
@@ -31,11 +31,11 @@ contract Token4 is
     }
 
     function initialize(ISenateUpgradeable _senate) public initializer {
-        __ERC721_init("Token4", "TK4");
+        __ERC721_init("Token8", "TK8");
         __ERC721Enumerable_init();
         __Pausable_init();
         __Ownable_init();
-        __EIP712_init("Token4", "1");
+        __EIP712_init("Token8", "1");
         __ERC721SenatorVotes_init(_senate);
     }
 
@@ -83,7 +83,7 @@ contract Token4 is
         returns (bool)
     {
         return
-            super.supportsInterface(interfaceId) ||
-            interfaceId == type(ISenatorVotesUpgradeable).interfaceId;
+            interfaceId == type(ISenatorVotesUpgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }

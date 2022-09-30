@@ -1,9 +1,9 @@
 import { artifacts, ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { developmentChains } from "../helper-hardhat.config";
-import { burnAddress, getAddress } from "../scripts/utils";
-import { RepublicExecutor } from "../typechain-types";
+import { developmentChains } from "../../helper-hardhat.config";
+import { burnAddress, getAddress } from "../../scripts/utils";
+import { RepublicExecutor } from "../../typechain-types";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 
@@ -27,27 +27,19 @@ const deploySenate: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const executor = await get("RepublicExecutor");
   //we deploy senate without tokens. We call openSenate after the house is up
   const senateFactory = await ethers.getContractFactory("RepublicSenate");
-  const senate = await upgrades.deployProxy(senateFactory, [
+  const senate = await senateFactory.deploy(
     deployer,
     executor.address,
     votingDelay,
     votingPeriod,
     tokenTreshold,
     quorum,
-    quaratinePeriod,
-  ]);
+    quaratinePeriod
+  );
 
   await senate.deployed();
 
-  console.log(senate.address, " Senate(proxy) address");
-  console.log(
-    await upgrades.erc1967.getImplementationAddress(senate.address),
-    " getImplementationAddress"
-  );
-  console.log(
-    await upgrades.erc1967.getAdminAddress(senate.address),
-    " getAdminAddress"
-  );
+  console.log(senate.address, " Senate address");
 
   const senateInstance = await senateFactory.attach(senate.address);
 

@@ -1,9 +1,9 @@
 import { artifacts, ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { developmentChains } from "../helper-hardhat.config";
-import { burnAddress, getAddress } from "../scripts/utils";
-import { RepublicExecutor } from "../typechain-types";
+import { developmentChains } from "../../helper-hardhat.config";
+import { burnAddress, getAddress } from "../../scripts/utils";
+import { RepublicExecutor } from "../../typechain-types";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 
@@ -25,10 +25,6 @@ const deployChancelor: DeployFunction = async (
   const { deployer } = await getNamedAccounts();
   const { chainId } = network.config;
 
-  const token1 = await get("Token1");
-  const token2 = await get("Token2");
-  const token3 = await get("Token3");
-
   const executorFactory = await ethers.getContractFactory("RepublicExecutor");
 
   const executor = await get("RepublicExecutor");
@@ -38,25 +34,16 @@ const deployChancelor: DeployFunction = async (
 
   const senate = await get("RepublicSenate");
 
-  console.log(`Token1 address: ${token1.address}`);
   console.log(`Executor address: ${executor.address}`);
   const chancelorFactory = await ethers.getContractFactory("RepublicChancelor");
-  const chancelor = await upgrades.deployProxy(chancelorFactory, [
+  const chancelor = await chancelorFactory.deploy(
     executor.address,
-    senate.address,
-  ]);
+    senate.address
+  );
 
   await chancelor.deployed();
 
-  console.log(chancelor.address, " Chancelor(proxy) address");
-  console.log(
-    await upgrades.erc1967.getImplementationAddress(chancelor.address),
-    " getImplementationAddress"
-  );
-  console.log(
-    await upgrades.erc1967.getAdminAddress(chancelor.address),
-    " getAdminAddress"
-  );
+  console.log(chancelor.address, " Chancelor address");
 
   const owner = getAddress("owner");
 

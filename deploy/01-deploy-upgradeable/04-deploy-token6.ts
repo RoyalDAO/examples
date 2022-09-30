@@ -8,27 +8,29 @@ const BASE_FEE = ethers.utils.parseEther("0.25");
 // Calculated value based on the gas price on the chain
 const GAS_PRICE_LINK = 1e9;
 
-const deployToken5: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const deployToken6: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deploy, log, save, get } = deployments;
 
   const { deployer } = await getNamedAccounts();
   const { chainId } = network.config;
 
-  const Token5Factory = await ethers.getContractFactory("Token5");
-  const token5 = await Token5Factory.deploy();
-  await token5.deployed();
+  const senate = await get("UpgradeableRepublicSenate");
 
-  console.log(token5.address, " Token5 address");
+  const Token6Factory = await ethers.getContractFactory("Token6");
+  const token6 = await Token6Factory.deploy(senate.address);
+  await token6.deployed();
 
-  const artifact = await deployments.getArtifact("Token5");
+  console.log(token6.address, " Token6 address");
 
-  await save("Token5", {
-    address: token5.address,
+  const artifact = await deployments.getArtifact("Token6");
+
+  await save("Token6", {
+    address: token6.address,
     ...artifact,
   });
 };
 
-export default deployToken5;
+export default deployToken6;
 
-deployToken5.tags = ["all", "token5"];
+deployToken6.tags = ["all", "token6"];
